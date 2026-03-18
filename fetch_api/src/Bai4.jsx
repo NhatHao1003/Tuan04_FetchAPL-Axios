@@ -1,30 +1,43 @@
 import React, { useState, useEffect } from 'react';
 
 function Bai4() {
-  const [posts, setPosts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [data, setData] = useState([]);
+  const [dataSearch, setDataSearch] = useState([]);
+  const [searchValue, setSearchValue] = useState("")
 
+  var url = "https://jsonplaceholder.typicode.com/posts"
+  // useEffect(() => {
+  //   fetch('https://jsonplaceholder.typicode.com/posts')
+  //     .then(res => res.json())
+  //     .then(data => setData(data));
+
+  // }, []);
+
+  useEffect(() =>{
+    async function fetchData(){
+      var res = await fetch(url)
+      var dataRes = await res.json()
+      setData(dataRes)
+      setDataSearch(dataRes)    
+    }
+
+    fetchData()
+  }, [])
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-      .then(res => res.json())
-      .then(data => setPosts(data));
-  }, []);
-
-  const filteredPosts = posts.filter(post => 
-    post.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const fill = data.filter(data => data.title.includes(searchValue))
+    setDataSearch(fill)
+  }, [searchValue])
+  
 
   return (
     <div>
-      <input 
-        type="text" 
-        placeholder="Search by title..." 
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)} 
-      />
+      <input type="text" placeholder="Search by title..." value={searchValue} onChange={(e) => setSearchValue(e.target.value)}/>
       <ul>
-        {filteredPosts.map(post => (
-          <li key={post.id}>{post.title}</li>
+        {dataSearch.map(data => (
+          <div key={data.id}>
+            <h2>{data.title}</h2>
+            <p>{data.body}</p>
+          </div>
         ))}
       </ul>
     </div>
